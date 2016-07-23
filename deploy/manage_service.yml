@@ -1,0 +1,11 @@
+# ansible-playbook manage_service.yml -i ec2 -e state=started
+
+- hosts: ec2
+  remote_user: centos
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: "Manage pokemaps process"
+      service:
+        name: pokemaps
+        state: "{{ state | default( 'restarted' ) }}"

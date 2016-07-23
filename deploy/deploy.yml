@@ -1,0 +1,7 @@
+# ansible-playbook deploy.yml -i ec2
+
+- hosts: ec2
+  remote_user: centos
+  roles:
+    - "setup-os"
+    - "deploy-code"

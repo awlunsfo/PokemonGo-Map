@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+require "thor"
+
+class Pokemaps < Thor
+  attr_reader :bp
+
+  def initialize(*args)
+    super
+    @bp = File.expand_path( "../", __FILE__ ) # bp = base path
+  end
+
+  desc "deploy TAGS", "deploy pokemaps"
+  method_option :'config-only', :aliases => "-c", :desc => "Updates config files"
+  method_option :'update-code', :aliases => "-u", :desc => "Just does a pull on the codebase"
+  def deploy
+    tags = options.keys.join(",")
+
+    cmd = "ansible-playbook #{bp}/deploy.yml -i #{bp}/ec2"
+    cmd << " --tags=#{tags}" if !tags.empty?
+
+    system cmd
+  end
+
+  desc "manages CMD", "Manages the pokemaps service"
+  def manage( type )
+    cmds = ["start", "stop", "restart"]
+
+    if cmds.include?( type )
+      type = "restarted" if type == "restart"
+      type = "stopped"   if type == "stop"
+      type = "started"   if type == "start"
+
+      cmd = "ansible-playbook #{bp}/manage_service.yml -i #{bp}/ec2 -e state=#{type}"
+
+      system cmd
+    else
+      puts "Availble parameters are: #{cmds.join(", ")}"
+    end
+  end
+
+  desc "ec2 CMD", "Manages the pokemaps ec2 instance"
+  def ec2( type )
+    cmds = ["restart","stop","start"]
+
+    if cmds.include?( type )
+      type = "restarted" if type == "restart"
+      type = "stopped"   if type == "stop"
+      type = "running"   if type == "start"
+
+      cmd = "ansible-playbook #{bp}/manage_ec2.yml -i #{bp}/localhost --vault-password-file=#{bp}/.vaultfile -e state=#{type}"
+
+      system cmd
+
+      # Start up the pokemaps service if the EC2 instances was started or restarted
+      if ["restarted", "running"].include?( type )
+        manage( "start" )
+      end
+    else
+      puts "Availble parameters are: #{cmds.join(", ")}"
+    end
+  end
+end
+
+Pokemaps.start

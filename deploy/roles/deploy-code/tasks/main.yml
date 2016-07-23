@@ -1,0 +1,57 @@
+---
+- name: "Create checkout location"
+  file:
+    path: "/opt/pokemaps"
+    state: directory
+    owner: "centos"
+    group: "centos"
+  become: yes
+
+
+- name: "Checkout latest code"
+  git:
+    repo:           "git@github.com:awlunsfo/PokemonGo-Map.git"
+    dest:           "{{ checkout_location }}"
+    version:        "dev_fixes"
+    accept_hostkey: yes
+  notify:
+    - restart pokemaps
+  tags:
+    - update-code
+
+
+- name: "Install dependencies"
+  pip:
+    requirements: "requirements.txt"
+    chdir: "{{ checkout_location }}"
+  become: yes
+  notify:
+    - restart pokemaps
+  tags:
+    - update-code
+
+
+- name: "Copy over credentials and locations"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ checkout_location }}/config/{{ item }}"
+  with_items:
+    - "config.ini"
+    - "credentials.json"
+    - "settings.yml"
+  notify:
+    - restart pokemaps
+  tags:
+    - config-only
+
+
+- name: "Copy pokemap service"
+  template:
+    src: "pokemaps.service.j2"
+    dest: "/etc/systemd/system/pokemaps.service"
+  become: yes
+  notify:
+    - reload systemd
+    - restart pokemaps
+  tags:
+    - config-only

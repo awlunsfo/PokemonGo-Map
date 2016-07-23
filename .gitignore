@@ -4,7 +4,13 @@
 *.db-journal
 *.sass-cache
 *.orig
+*.retry
+.vaultfile
+Gemfile.lock
 config/config.ini
+config/credentials.json
+config/locations.yml
+config/settings.yml
 static/dist/
 node_modules/
 venv/

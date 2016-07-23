@@ -1,0 +1,9 @@
+---
+locations:
+    the_gas_station: "12.34,-56.78"
+    home:            "34.12,-65.87"
+credentials:
+    - username: foo
+      password: bar
+    - username: baz
+      password: buz

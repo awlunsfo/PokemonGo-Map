@@ -1,0 +1,11 @@
+---
+- name: "Install Yum packages"
+  yum:
+    name:  "{{ item }}"
+    state: latest
+  with_items:
+    - "epel-release"
+    - "python-devel"
+    - "python-pip"
+    - "ruby"
+  become: yes

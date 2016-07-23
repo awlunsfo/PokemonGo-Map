@@ -37,9 +37,9 @@ class AuthPtc(Auth):
 
     def __init__(self):
         Auth.__init__(self)
-        
+
         self._auth_provider = 'ptc'
-        
+
         self._session = requests.session()
         self._session.verify = True
 
@@ -49,13 +49,19 @@ class AuthPtc(Auth):
 
         head = {'User-Agent': 'niantic'}
         r = self._session.get(self.PTC_LOGIN_URL, headers=head)
-        
+
+        if r.status_code != 200:
+            self.log.info("Could not log in, PTC servers returned a status code of %s", r.status_code)
+            return False
+
+        self.log.info("Status code is: %s", r.status_code)
+
         try:
             jdata = json.loads(r.content)
         except ValueError as e:
             self.log.error('{}... server seems to be down :('.format(str(e)))
             return False
-            
+
         data = {
             'lt': jdata['lt'],
             'execution': jdata['execution'],
@@ -82,7 +88,7 @@ class AuthPtc(Auth):
             'grant_type': 'refresh_token',
             'code': ticket,
         }
-        
+
         r2 = self._session.post(self.PTC_LOGIN_OAUTH, data=data1)
         access_token = re.sub('&expires.*', '', r2.content)
         access_token = re.sub('.*access_token=', '', access_token)
@@ -94,8 +100,7 @@ class AuthPtc(Auth):
         else:
             self.log.info('Seems not to be a PTC Session Token... login failed :(')
             return False
-        
+
         self._login = True
-        
+
         return True
-        

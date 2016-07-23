@@ -1,0 +1,9 @@
+[Unit]
+Description=Pokemaps
+
+[Service]
+Type=simple
+User=centos
+WorkingDirectory={{ checkout_location }}
+ExecStart={{ checkout_location }}/findEmAll.rb
+Restart=on-abort
