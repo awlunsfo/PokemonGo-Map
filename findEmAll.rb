@@ -51,7 +51,7 @@ puts "Looking for Pokemon at: #{locations.keys.join(", ")} \n"
 # Start up the commands in their own thread
 cmds.each do |cmd|
   Thread.new { system cmd }
-  sleep 1
+  sleep 3
 end
 
 # Block until all threads are complete, which will be when we send a sigterm
