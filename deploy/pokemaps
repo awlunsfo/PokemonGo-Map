@@ -12,6 +12,7 @@ class Pokemaps < Thor
   desc "deploy TAGS", "deploy pokemaps"
   method_option :'config-only', :aliases => "-c", :desc => "Updates config files"
   method_option :'update-code', :aliases => "-u", :desc => "Just does a pull on the codebase"
+  method_option :'grunt',       :aliases => "-g", :desc => "Does the grunt deploy crap"
   def deploy
     tags = options.keys.join(",")
 
