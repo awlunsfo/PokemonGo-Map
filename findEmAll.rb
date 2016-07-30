@@ -15,7 +15,6 @@ threads, cmds = Array.new, Array.new
 
 # Setup variables for looping over locations and sequentially using credentials
 # found in the 'credentials' block of the settings file.
-last          = locations.size - 1
 cred_index    = 0
 
 # Loop over locations and build a command for starting up a pokemap server.
@@ -35,9 +34,8 @@ locations.each_with_index do |(place, location), index|
   # Tack on arguments to the runserver.py command.
   # Need just 1 web server, so only the last location starts one up. Tack on the
   # -cd flag to clear the database when the first server starts.
-  cmd << " -ns"        if index != last
-  cmd << " -H 0.0.0.0" if index == last
-  cmd << " -cd"        if index == 0 # clear db on first start
+  cmd << " -ns"            if index != 0
+  cmd << " -cd -H 0.0.0.0" if index == 0
 
   # Uncomment to suppress python output
   # cmd << " > /dev/null 2>&1"
