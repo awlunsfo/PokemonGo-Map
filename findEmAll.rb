@@ -11,7 +11,7 @@ locations     = settings["locations"]
 credentials   = settings["credentials"]
 
 # Setup variables to store commands for creating threads
-threads, cmds = Array.new, ["grunt build"]
+threads, cmds = Array.new, Array.new
 
 # Setup variables for looping over locations and sequentially using credentials
 # found in the 'credentials' block of the settings file.
