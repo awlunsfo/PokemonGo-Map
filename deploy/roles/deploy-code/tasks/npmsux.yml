@@ -6,7 +6,7 @@
     - grunt
 
 
-- name: "Install grunt and grunt-cli globally"
+- name: "Give your system AIDS"
   npm:
     name: "{{ item }}"
     state: "present"
@@ -20,7 +20,7 @@
     - grunt
 
 
-- name: "Install npm dependencies"
+- name: "Install npm dependencies (if npm is working at the time)"
   npm:
     path: "{{ root_dir }}"
   delegate_to: localhost
@@ -28,7 +28,7 @@
     - grunt
 
 
-- name: "grunt build for assets"
+- name: "Leverage your new-found AIDS to build assets"
   command:
     "grunt build"
   args:
@@ -38,29 +38,38 @@
     - grunt
 
 
-- name: "tar up node_modules"
+- name: "tar up cancer and AIDS-riddled assets"
   command:
-    tar czf node_modules.tgz node_modules/
+    "{{ item }}"
   args:
     chdir: "{{ root_dir }}"
+  with_items:
+    - "tar czf node_modules.tgz node_modules/"
+    - "tar czf static_dist.tgz static/dist"
   run_once: true
   delegate_to: localhost
   tags:
     - grunt
 
 
-- name: "Put node_modules on the remote host"
+- name: "Put .tgz's on the host (this takes a while b/c npm is a joke)"
   unarchive:
-    src: "{{ root_dir }}/node_modules.tgz"
+    src: "{{ root_dir }}/{{ item }}"
     dest: "{{ checkout_location }}"
+  with_items:
+    - "node_modules.tgz"
+    - "static_dist.tgz"
   tags:
     - grunt
   notify:
     - restart pokemaps
 
 
-- name: "Remove local node_modules.tgz"
+- name: "Remove that shiz before it spreads"
   file:
-    path: "{{ root_dir }}/node_modules.tgz"
+    path: "{{ root_dir }}/{{ item }}"
     state: absent
+  with_items:
+    - "node_modules.tgz"
+    - "static_dist.tgz"
   delegate_to: localhost
