@@ -1,0 +1,45 @@
+---
+- name: "Set the root dir"
+  set_fact:
+    root_dir: "{{ playbook_dir }}/../"
+
+
+- name: "Install grunt and grunt-cli globally"
+  npm:
+    name: "{{ item }}"
+    state: "present"
+    global: yes
+  with_items:
+    - "grunt"
+    - "grunt-cli"
+  become: yes
+  delegate_to: localhost
+
+
+- name: "Install npm dependencies"
+  npm:
+    path: "{{ root_dir }}"
+  delegate_to: localhost
+
+
+- name: "grunt build for assets"
+  command:
+    "grunt build"
+  args:
+    chdir: "{{ root_dir }}"
+  delegate_to: localhost
+
+
+- name: "tar up node_modules"
+  command:
+    tar czf node_modules.tgz node_modules/
+  args:
+    chdir: "{{ root_dir }}"
+  run_once: true
+  delegate_to: localhost
+
+
+- name: "Put node_modules on the remote host"
+  unarchive:
+    src: "{{ root_dir }}/node_modules.tgz"
+    dest: "{{ checkout_location }}"

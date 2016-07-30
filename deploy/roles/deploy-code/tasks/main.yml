@@ -20,7 +20,7 @@
     - update-code
 
 
-- name: "Install dependencies"
+- name: "Install python dependencies"
   pip:
     requirements: "requirements.txt"
     chdir: "{{ checkout_location }}"
@@ -29,6 +29,9 @@
     - restart pokemaps
   tags:
     - update-code
+
+
+- include: "npmsux.yml"
 
 
 - name: "Copy over credentials and locations"

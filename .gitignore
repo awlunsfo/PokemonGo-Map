@@ -5,6 +5,7 @@
 *.sass-cache
 *.orig
 *.retry
+*.tgz
 .vaultfile
 Gemfile.lock
 config/config.ini

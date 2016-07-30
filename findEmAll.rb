@@ -11,7 +11,7 @@ locations     = settings["locations"]
 credentials   = settings["credentials"]
 
 # Setup variables to store commands for creating threads
-threads, cmds = Array.new, Array.new
+threads, cmds = Array.new, ["grunt build"]
 
 # Setup variables for looping over locations and sequentially using credentials
 # found in the 'credentials' block of the settings file.
@@ -30,7 +30,7 @@ locations.each_with_index do |(place, location), index|
   # Get the file path to runserver.py, relative to findEmAll.rb. Build the command
   # to run from there.
   file  = "#{File.expand_path( "../runserver.py", __FILE__ )}"
-  cmd   = "python #{file} -a ptc -u '#{user}' -p '#{pass}' -l #{location} -st 10 -sd 1"
+  cmd   = "python #{file} -a ptc -u '#{user}' -p '#{pass}' -l #{location} -st 10 -sd 3"
 
   # Tack on arguments to the runserver.py command.
   # Need just 1 web server, so only the last location starts one up. Tack on the
