@@ -19,12 +19,14 @@
   tags:
     - grunt
 
+
 - name: "Install npm dependencies"
   npm:
     path: "{{ root_dir }}"
   delegate_to: localhost
   tags:
     - grunt
+
 
 - name: "grunt build for assets"
   command:
@@ -34,6 +36,7 @@
   delegate_to: localhost
   tags:
     - grunt
+
 
 - name: "tar up node_modules"
   command:
@@ -45,9 +48,19 @@
   tags:
     - grunt
 
+
 - name: "Put node_modules on the remote host"
   unarchive:
     src: "{{ root_dir }}/node_modules.tgz"
     dest: "{{ checkout_location }}"
   tags:
     - grunt
+  notify:
+    - restart pokemaps
+
+
+- name: "Remove local node_modules.tgz"
+  file:
+    path: "{{ root_dir }}/node_modules.tgz"
+    state: absent
+  delegate_to: localhost
