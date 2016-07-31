@@ -47,7 +47,6 @@
   args:
     chdir: "{{ root_dir }}"
   with_items:
-    - "tar czf node_modules.tgz node_modules/"
     - "tar czf static_dist.tgz static/dist"
   run_once: true
   delegate_to: localhost
@@ -55,12 +54,19 @@
     - grunt
 
 
+- name: "Remove existing diseases before slathering down our new ones"
+  file:
+    path: "{{ checkout_location }}/{{ item }}"
+    state: absent
+  with_items:
+    - "static/dist/"
+
+
 - name: "Put .tgz's on the host (this takes a while b/c npm is a joke)"
   unarchive:
     src: "{{ root_dir }}/{{ item }}"
     dest: "{{ checkout_location }}"
   with_items:
-    - "node_modules.tgz"
     - "static_dist.tgz"
   tags:
     - grunt
@@ -73,7 +79,6 @@
     path: "{{ root_dir }}/{{ item }}"
     state: absent
   with_items:
-    - "node_modules.tgz"
     - "static_dist.tgz"
   run_once: true
   delegate_to: localhost
